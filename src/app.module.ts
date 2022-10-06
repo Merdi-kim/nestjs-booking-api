@@ -8,6 +8,7 @@ import { HotelModule } from './hotel/hotel.module';
 import { ReservationModule } from './reservation/reservation.module';
 import { UserModule } from './user/user.module';
 import { User } from './user/user.entity';
+import { Hotel } from './hotel/hotel.entity';
 
 @Module({
   imports: [UserModule, HotelModule, BookmarkModule, ReservationModule, TypeOrmModule.forRoot({
@@ -17,7 +18,7 @@ import { User } from './user/user.entity';
     username: 'merkim',
     password: '12345',
     database: 'booking',
-    entities: [User],
+    entities: [User, Hotel],
     synchronize: true,   //not advised for production
   })],
   controllers: [AppController],
