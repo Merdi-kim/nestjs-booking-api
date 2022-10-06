@@ -1,9 +1,10 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, ForbiddenException, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import * as bcrypt from 'bcrypt'
 import {UserSignupData, UserSigninData} from './dto/index.dto'
 import { User } from './user.entity';
+
 
 @Injectable()
 export class UserService {
@@ -11,30 +12,67 @@ export class UserService {
     constructor(@InjectRepository(User) private userRepository:Repository<User>) {}
 
     async signup(data:UserSignupData) {
-        const hash = await bcrypt.hash(data.password, 12)
-        return await this.userRepository.save({...data, password:hash})
+        try {
+            const user = await this.userRepository.findOne({
+                where:{
+                    email:data.email
+                }
+            })
+            if(user) throw new ForbiddenException('Email taken')
+            const hash = await bcrypt.hash(data.password, 12)
+            const createdUser = await this.userRepository.save({...data, password:hash})
+            delete createdUser.password
+            return createdUser
+        }catch(err) {
+            throw err
+        }
+        
     }
 
     async signin(data:UserSigninData) {
-        const user = await this.userRepository.findOne({
-            where:{
-                email:data.email
+        try{
+            const user = await this.userRepository.findOne({
+                where:{
+                    email:data.email
+                }
+            })
+            if(!user){
+                throw new NotFoundException('User not found')
             }
-        })
-        const userExists = await bcrypt.compare(data.password,user.password)
-        return userExists ? user : new HttpException('no user', HttpStatus.NOT_FOUND)
+            const isPassword = await bcrypt.compare(data.password,user.password)
+            if(!isPassword) {
+                throw new ForbiddenException('wrong password')
+            }
+            delete user.password
+            return user
+        }catch(err) {
+            throw err
+        }
     }
 
     async getUser(id:number) {
-        return await this.userRepository.findOne({
+        const user = await this.userRepository.findOne({
             where: {
                 id
             }
         })
+        if(!user) throw new NotFoundException('User not found')
+        delete user.password
+        return user
     }
 
-    deleteUser(id:number) {
-        console.log(id)
-        return "Why do you want to delete the user?"
+    async getUsers() {
+        return await this.userRepository.find()
+    }
+
+    async deleteUser(email:{email:string}) {
+       const user = await this.userRepository.findOne({
+        where:{
+            email:email.email
+        }
+       })
+       if(!user) throw new NotFoundException('User does not exist')
+       const dd = await this.userRepository.delete(user)
+       return 'deletion complete'
     }
 }
