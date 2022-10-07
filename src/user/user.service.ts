@@ -72,7 +72,13 @@ export class UserService {
         }
        })
        if(!user) throw new NotFoundException('User does not exist')
-       const dd = await this.userRepository.delete(user)
+       await this.userRepository
+        .createQueryBuilder()
+        .delete()
+        .from(User)
+        .where("email=:email", {email:user.email})
+        .execute()
+       //await this.userRepository.delete(user) //delete(user)
        return 'deletion complete'
     }
 }
