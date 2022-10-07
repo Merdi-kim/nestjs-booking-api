@@ -1,12 +1,16 @@
-import {IsEmail, MinLength, IsNumber} from 'class-validator'
+import {
+  IsEmail,
+  MinLength,
+  IsNumber,
+} from 'class-validator';
 
 export class HotelDto {
-    @MinLength(3)
-    name:string
+  @MinLength(3)
+  name: string;
 
-    @IsEmail()
-    owner:string 
+  @IsEmail()
+  owner: string;
 
-    @IsNumber()
-    price:number 
+  @IsNumber()
+  price: number;
 }

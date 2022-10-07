@@ -1,20 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+} from 'typeorm';
 
 @Entity('hotel')
 export class Hotel {
-    @PrimaryGeneratedColumn()
-    id:number
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name:string
+  @Column()
+  name: string;
 
-    @Column() 
-    owner:string 
+  @Column()
+  owner: string;
 
-    @Column()
-    price:number 
+  @Column()
+  price: number;
 
-    @Column("text",{array:true, default:[]}) 
-    reservations:string[]
-    
+  @Column('text', { array: true, default: [] })
+  reservations: string[];
 }
