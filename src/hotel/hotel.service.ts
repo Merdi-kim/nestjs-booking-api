@@ -15,8 +15,9 @@ export class HotelService {
     return await this.hotelRepository.find();
   }
 
-  async getReservationsForHotel(hotelName: string, owner?) {try {const hotel = await this.hotelRepository.findOne({where: {name: hotelName,},
-      });
+  async getReservationsForHotel(hotelName: string, owner?) {
+    try {
+      const hotel = await this.hotelRepository.findOne({ where: { name: hotelName } });
       return owner == hotel.owner ? hotel.reservations : hotel.reservations.length;
     } catch (err) {
       throw err;
