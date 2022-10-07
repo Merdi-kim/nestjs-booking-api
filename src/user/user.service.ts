@@ -51,34 +51,42 @@ export class UserService {
     }
 
     async getUser(id:number) {
-        const user = await this.userRepository.findOne({
-            where: {
-                id
-            }
-        })
-        if(!user) throw new NotFoundException('User not found')
-        delete user.password
-        return user
+        try {
+            const user = await this.userRepository.findOne({
+                where: {
+                    id
+                }
+            })
+            if(!user) throw new NotFoundException('User not found')
+            delete user.password
+            return user
+        }catch(err) {
+            throw err
+        }
     }
 
     async getUsers() {
         return await this.userRepository.find()
     }
 
-    async deleteUser(email:{email:string}) {
-       const user = await this.userRepository.findOne({
-        where:{
-            email:email.email
+    async deleteUser(email:string) {
+        try {
+            const user = await this.userRepository.findOne({
+                where:{
+                    email
+                }
+               })
+               if(!user) throw new NotFoundException('User does not exist')
+               await this.userRepository
+                .createQueryBuilder()
+                .delete()
+                .from(User)
+                .where("email=:email", {email})
+                .execute()
+               //await this.userRepository.delete(user) //delete(user)
+               return 'deletion complete'
+        }catch(err) {
+            throw err
         }
-       })
-       if(!user) throw new NotFoundException('User does not exist')
-       await this.userRepository
-        .createQueryBuilder()
-        .delete()
-        .from(User)
-        .where("email=:email", {email:user.email})
-        .execute()
-       //await this.userRepository.delete(user) //delete(user)
-       return 'deletion complete'
     }
 }

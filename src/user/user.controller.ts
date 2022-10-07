@@ -29,7 +29,7 @@ export class UserController {
     }
 
     @Delete('delete')
-    deleteUser(@Body() data:{email:string}):Promise<string> {
-        return this.userService.deleteUser(data)
+    deleteUser(@Body('email') email:string):Promise<string> {
+        return this.userService.deleteUser(email)
     }
 }
