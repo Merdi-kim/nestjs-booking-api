@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs//typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/user.entity';
@@ -14,32 +10,17 @@ export class BookmarkService {
     private userRepository: Repository<User>,
   ) {}
 
-  async addBookmark(
-    email: string,
-    hotelName: string,
-  ) {
+  async addBookmark(email: string, hotelName: string) {
     try {
-      const user =
-        await this.userRepository.findOne({
-          where: {
-            email,
-          },
-        });
-      if (!user)
-        throw new NotFoundException(
-          'User not found',
-        );
-      const isBookmarked = user.bookmarks.find(
-        (bookmark) => bookmark === hotelName,
-      );
-      if (isBookmarked)
-        throw new ForbiddenException(
-          'Bookmarked already',
-        );
-      const newBookmarks = [
-        ...user.bookmarks,
-        hotelName,
-      ];
+      const user = await this.userRepository.findOne({
+        where: {
+          email,
+        },
+      });
+      if (!user) throw new NotFoundException('User not found');
+      const isBookmarked = user.bookmarks.find((bookmark) => bookmark === hotelName);
+      if (isBookmarked) throw new ForbiddenException('Bookmarked already');
+      const newBookmarks = [...user.bookmarks, hotelName];
       await this.userRepository
         .createQueryBuilder()
         .update(User)
@@ -52,30 +33,17 @@ export class BookmarkService {
     }
   }
 
-  async removeBookmark(
-    email: string,
-    hotelName: string,
-  ) {
+  async removeBookmark(email: string, hotelName: string) {
     try {
-      const user =
-        await this.userRepository.findOne({
-          where: {
-            email,
-          },
-        });
-      if (!user)
-        throw new NotFoundException(
-          'User not found',
-        );
-      const isBookmarked = user.bookmarks.find(
-        (bookmark) => bookmark === hotelName,
-      );
-      if (!isBookmarked)
-        throw new ForbiddenException(
-          'Not yet bookmarked',
-        );
-      const index =
-        user.bookmarks.indexOf(hotelName);
+      const user = await this.userRepository.findOne({
+        where: {
+          email,
+        },
+      });
+      if (!user) throw new NotFoundException('User not found');
+      const isBookmarked = user.bookmarks.find((bookmark) => bookmark === hotelName);
+      if (!isBookmarked) throw new ForbiddenException('Not yet bookmarked');
+      const index = user.bookmarks.indexOf(hotelName);
       user.bookmarks.splice(index, 1);
       await this.userRepository
         .createQueryBuilder()

@@ -10,10 +10,7 @@ import {
   ParseIntPipe,
   Post,
 } from '@nestjs/common';
-import {
-  UserSignupData,
-  UserSigninData,
-} from './dto/index.dto';
+import { UserSignupData, UserSigninData } from './dto/index.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 
@@ -27,30 +24,22 @@ export class UserController {
   }
 
   @Get(':id')
-  getUser(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<User> {
+  getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.getUser(id);
   }
 
   @Post('signup')
-  signup(
-    @Body() userSignupDto: UserSignupData,
-  ): Promise<UserSignupData> {
+  signup(@Body() userSignupDto: UserSignupData): Promise<UserSignupData> {
     return this.userService.signup(userSignupDto);
   }
 
   @Post('signin')
-  signin(
-    @Body() userSigninDto: UserSigninData,
-  ): Promise<User> {
+  signin(@Body() userSigninDto: UserSigninData): Promise<User> {
     return this.userService.signin(userSigninDto);
   }
 
   @Delete('delete')
-  deleteUser(
-    @Body('email') email: string,
-  ): Promise<string> {
+  deleteUser(@Body('email') email: string): Promise<string> {
     return this.userService.deleteUser(email);
   }
 }

@@ -1,7 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { HotelDto } from './hotel.dto';
@@ -18,20 +15,9 @@ export class HotelService {
     return await this.hotelRepository.find();
   }
 
-  async getReservationsForHotel(
-    hotelName: string,
-    owner?,
-  ) {
-    try {
-      const hotel =
-        await this.hotelRepository.findOne({
-          where: {
-            name: hotelName,
-          },
-        });
-      return owner == hotel.owner
-        ? hotel.reservations
-        : hotel.reservations.length;
+  async getReservationsForHotel(hotelName: string, owner?) {try {const hotel = await this.hotelRepository.findOne({where: {name: hotelName,},
+      });
+      return owner == hotel.owner ? hotel.reservations : hotel.reservations.length;
     } catch (err) {
       throw err;
     }
@@ -39,48 +25,31 @@ export class HotelService {
 
   async addHotel(data: HotelDto) {
     try {
-      const hotel =
-        await this.hotelRepository.findOne({
-          where: {
-            name: data.name,
-          },
-        });
+      const hotel = await this.hotelRepository.findOne({
+        where: {
+          name: data.name,
+        },
+      });
 
-      if (hotel)
-        throw new ForbiddenException(
-          'Name taken',
-        );
-      return await this.hotelRepository.save(
-        data,
-      );
+      if (hotel) throw new ForbiddenException('Name taken');
+      return await this.hotelRepository.save(data);
     } catch (err) {
       throw err;
     }
   }
 
-  async modifyHotelPrice(
-    hotelName,
-    owner,
-    price,
-  ) {
+  async modifyHotelPrice(hotelName, owner, price) {
     try {
-      const hotel =
-        await this.hotelRepository.findOne({
-          where: {
-            name: hotelName,
-            owner,
-          },
-        });
+      const hotel = await this.hotelRepository.findOne({
+        where: {
+          name: hotelName,
+          owner,
+        },
+      });
 
-      if (!hotel)
-        throw new ForbiddenException(
-          'Hotel not found',
-        );
+      if (!hotel) throw new ForbiddenException('Hotel not found');
 
-      if (hotel.price == price)
-        throw new ForbiddenException(
-          'Price must be different from current price',
-        );
+      if (hotel.price == price) throw new ForbiddenException('Price must be different from current price');
 
       await this.hotelRepository
         .createQueryBuilder()
@@ -96,18 +65,14 @@ export class HotelService {
 
   async deleteHotel(hotelName, owner) {
     try {
-      const hotel =
-        await this.hotelRepository.findOne({
-          where: {
-            name: hotelName,
-            owner,
-          },
-        });
+      const hotel = await this.hotelRepository.findOne({
+        where: {
+          name: hotelName,
+          owner,
+        },
+      });
 
-      if (!hotel)
-        throw new ForbiddenException(
-          'Hotel not found',
-        );
+      if (!hotel) throw new ForbiddenException('Hotel not found');
       await this.hotelRepository
         .createQueryBuilder()
         .delete()

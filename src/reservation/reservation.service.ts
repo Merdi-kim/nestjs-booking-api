@@ -1,8 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Hotel } from 'src/hotel/hotel.entity';
@@ -14,32 +10,17 @@ export class ReservationService {
     private hotelRepository: Repository<Hotel>,
   ) {}
 
-  async reserve(
-    email: string,
-    hotelName: string,
-  ) {
+  async reserve(email: string, hotelName: string) {
     try {
-      const hotel =
-        await this.hotelRepository.findOne({
-          where: {
-            name: hotelName,
-          },
-        });
-      if (!hotel)
-        throw new NotFoundException(
-          'Hotel not found',
-        );
-      const hasReserved = hotel.reservations.find(
-        (userEmail) => userEmail === email,
-      );
-      if (hasReserved)
-        throw new ForbiddenException(
-          'Already reserved',
-        );
-      const newReservations = [
-        ...hotel.reservations,
-        email,
-      ];
+      const hotel = await this.hotelRepository.findOne({
+        where: {
+          name: hotelName,
+        },
+      });
+      if (!hotel) throw new NotFoundException('Hotel not found');
+      const hasReserved = hotel.reservations.find((userEmail) => userEmail === email);
+      if (hasReserved) throw new ForbiddenException('Already reserved');
+      const newReservations = [...hotel.reservations, email];
       await this.hotelRepository
         .createQueryBuilder()
         .update(Hotel)
@@ -55,31 +36,18 @@ export class ReservationService {
     }
   }
 
-  async deleteReservation(
-    email: string,
-    hotelName: string,
-  ) {
+  async deleteReservation(email: string, hotelName: string) {
     try {
-      const hotel =
-        await this.hotelRepository.findOne({
-          where: {
-            name: hotelName,
-          },
-        });
+      const hotel = await this.hotelRepository.findOne({
+        where: {
+          name: hotelName,
+        },
+      });
 
-      if (!hotel)
-        throw new ForbiddenException(
-          'Hotel not found',
-        );
-      const hasReserved = hotel.reservations.find(
-        (userEmail) => userEmail === email,
-      );
-      if (!hasReserved)
-        throw new ForbiddenException(
-          'Reservation not found',
-        );
-      const index =
-        hotel.reservations.indexOf(email);
+      if (!hotel) throw new ForbiddenException('Hotel not found');
+      const hasReserved = hotel.reservations.find((userEmail) => userEmail === email);
+      if (!hasReserved) throw new ForbiddenException('Reservation not found');
+      const index = hotel.reservations.indexOf(email);
       hotel.reservations.splice(index, 1);
       await this.hotelRepository
         .createQueryBuilder()
