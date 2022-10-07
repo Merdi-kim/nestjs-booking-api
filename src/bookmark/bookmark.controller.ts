@@ -1,5 +1,16 @@
-import { Controller } from "@nestjs/common";
+import { Controller, Delete, Post } from "@nestjs/common";
 
 @Controller('bookmark')
 
-export class BookmarkController {}
+export class BookmarkController {
+
+    @Post('new')
+    addBookmark() {
+
+    }
+
+    @Delete('delete')
+    removeBookmark() {
+        
+    }
+}
