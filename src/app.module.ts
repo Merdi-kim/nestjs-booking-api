@@ -16,7 +16,7 @@ import { DatabaseModule } from './database/database.module';
     BookmarkModule,
     ReservationModule,
     DatabaseModule,
-    ConfigModule.forRoot({ isGlobal: true })
+    ConfigModule.forRoot({ isGlobal: true }),
   ],
   controllers: [AppController],
   providers: [AppService],
